@@ -7,6 +7,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.platform.PlatformViewRegistry;
 
 /** FlutterQiniuPiliPlugin */
 public class FlutterQiniuPiliPlugin implements FlutterPlugin, MethodCallHandler {
@@ -18,6 +19,10 @@ public class FlutterQiniuPiliPlugin implements FlutterPlugin, MethodCallHandler 
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+    PlatformViewRegistry platformViewRegistry = flutterPluginBinding.getPlatformViewRegistry();
+    platformViewRegistry.registerViewFactory("flutter_qiniu_pili/textview", new FlutterQiniuTextFactory());
+    platformViewRegistry.registerViewFactory("flutter_qiniu_pili/player", new FlutterQiniuPlayerFactory());
+
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "flutter_qiniu_pili");
     channel.setMethodCallHandler(this);
   }

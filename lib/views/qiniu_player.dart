@@ -1,8 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class QiniuPlayer extends StatefulWidget {
-  const QiniuPlayer({
+  final String videoPath;
+
+  const QiniuPlayer(
+    this.videoPath, {
     Key? key,
   }) : super(key: key);
 
@@ -14,8 +18,12 @@ class _QiniuPlayerState extends State<QiniuPlayer> {
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return const AndroidView(
+      return AndroidView(
         viewType: 'flutter_qiniu_pili/player',
+        creationParams: {
+          'videoPath': widget.videoPath,
+        },
+        creationParamsCodec: const StandardMessageCodec(),
       );
     }
     return Text(

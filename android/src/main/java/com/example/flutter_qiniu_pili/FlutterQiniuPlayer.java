@@ -1,31 +1,33 @@
 package com.example.flutter_qiniu_pili;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.pili.pldroid.player.AVOptions;
 import com.pili.pldroid.player.widget.PLVideoView;
 
 import java.util.Map;
 
+import io.flutter.Log;
 import io.flutter.plugin.platform.PlatformView;
 
 public class FlutterQiniuPlayer implements PlatformView {
     @NonNull private final PLVideoView videoView;
 
-    FlutterQiniuPlayer(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams) {
+    FlutterQiniuPlayer(@NonNull Context context, int id, @NonNull Map creationParams) {
         videoView = new PLVideoView(context);
+
+        Log.i("qiniu-player",creationParams.toString());
 
         AVOptions options = new AVOptions();
         options.setInteger(AVOptions.KEY_LOG_LEVEL, 5);
         videoView.setAVOptions(options);
 
-        videoView.setVideoPath("http://demo-videos.qnsdk.com/movies/qiniu.mp4");
+        String videoPath = (String) creationParams.get("videoPath");
+
+        videoView.setVideoPath(videoPath);
         videoView.start();
     }
 

@@ -29,7 +29,8 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Container(
           color: Colors.black,
-          child: const QiniuPlayer(),
+          child: const QiniuPlayer(
+              "http://demo-videos.qnsdk.com/movies/qiniu.mp4"),
         ),
       ),
     );

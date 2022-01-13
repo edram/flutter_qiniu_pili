@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_qiniu_pili/views/qiniu_player.dart';
+import 'package:flutter_qiniu_pili/flutter_qiniu_pili.dart';
 
 void main() {
   runApp(const MyApp());

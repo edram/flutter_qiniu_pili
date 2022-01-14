@@ -7,12 +7,13 @@ import androidx.annotation.Nullable;
 
 import java.util.Map;
 
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 
 public class FlutterQiniuTextFactory extends PlatformViewFactory {
-    FlutterQiniuTextFactory() {
+    FlutterQiniuTextFactory(BinaryMessenger messenger) {
         super(StandardMessageCodec.INSTANCE);
     }
 

@@ -11,13 +11,19 @@ import com.pili.pldroid.player.widget.PLVideoView;
 import java.util.Map;
 
 import io.flutter.Log;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
-public class FlutterQiniuPlayer implements PlatformView {
+public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCallHandler {
     @NonNull private final PLVideoView videoView;
+    @NonNull private final MethodChannel methodChannel;
 
-    FlutterQiniuPlayer(@NonNull Context context, int id, @NonNull Map creationParams) {
+    FlutterQiniuPlayer(@NonNull Context context, BinaryMessenger messenger, int id, @NonNull Map creationParams) {
         videoView = new PLVideoView(context);
+        methodChannel = new MethodChannel(messenger, "plugins.edram.qiniu_pili/player_" + id);
+        methodChannel.setMethodCallHandler(this);
 
         Log.i("qiniu-player",creationParams.toString());
 
@@ -41,7 +47,16 @@ public class FlutterQiniuPlayer implements PlatformView {
     public void dispose() {}
 
     @Override
-    public void onFlutterViewAttached(@NonNull View flutterView) {
-        System.out.print("123123");
+    public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+        switch (call.method) {
+            case "play":
+                videoView.start();
+                break;
+            case "pause":
+                videoView.pause();
+                break;
+            default:
+                result.notImplemented();
+        }
     }
 }

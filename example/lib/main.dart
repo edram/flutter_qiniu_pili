@@ -13,6 +13,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late QiniuPlayerController controller;
+
   @override
   void initState() {
     super.initState();
@@ -28,8 +30,28 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Container(
           color: Colors.black,
-          child: const QiniuPlayer(
-              "http://demo-videos.qnsdk.com/movies/qiniu.mp4"),
+          child: QiniuPlayer(
+            "http://demo-videos.qnsdk.com/movies/qiniu.mp4",
+            onQiniuPlayerCreated: (controller) {
+              this.controller = controller;
+            },
+          ),
+        ),
+        bottomNavigationBar: Row(
+          children: [
+            TextButton(
+              onPressed: () {
+                controller.pause();
+              },
+              child: const Text('暂停'),
+            ),
+            TextButton(
+              onPressed: () {
+                controller.play();
+              },
+              child: const Text('播放'),
+            ),
+          ],
         ),
       ),
     );

@@ -3,6 +3,7 @@ package com.example.flutter_qiniu_pili;
 import androidx.annotation.NonNull;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -19,9 +20,11 @@ public class FlutterQiniuPiliPlugin implements FlutterPlugin, MethodCallHandler 
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+    BinaryMessenger messenger = flutterPluginBinding.getBinaryMessenger();
     PlatformViewRegistry platformViewRegistry = flutterPluginBinding.getPlatformViewRegistry();
-    platformViewRegistry.registerViewFactory("flutter_qiniu_pili/textview", new FlutterQiniuTextFactory());
-    platformViewRegistry.registerViewFactory("flutter_qiniu_pili/player", new FlutterQiniuPlayerFactory());
+
+    platformViewRegistry.registerViewFactory("flutter_qiniu_pili/textview", new FlutterQiniuTextFactory(messenger));
+    platformViewRegistry.registerViewFactory("flutter_qiniu_pili/player", new FlutterQiniuPlayerFactory(messenger));
 
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "flutter_qiniu_pili");
     channel.setMethodCallHandler(this);

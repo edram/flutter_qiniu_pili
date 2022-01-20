@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.pili.pldroid.player.AVOptions;
+import com.pili.pldroid.player.PlayerState;
 import com.pili.pldroid.player.widget.PLVideoView;
 
 import java.util.Map;
@@ -19,6 +20,7 @@ import io.flutter.plugin.platform.PlatformView;
 public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCallHandler {
     @NonNull private final PLVideoView videoView;
     @NonNull private final MethodChannel methodChannel;
+    @NonNull private final String videoPath;
 
     FlutterQiniuPlayer(@NonNull Context context, BinaryMessenger messenger, int id, @NonNull Map creationParams) {
         videoView = new PLVideoView(context);
@@ -31,10 +33,7 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
         options.setInteger(AVOptions.KEY_LOG_LEVEL, 5);
         videoView.setAVOptions(options);
 
-        String videoPath = (String) creationParams.get("videoPath");
-
-        videoView.setVideoPath(videoPath);
-        videoView.start();
+        videoPath = (String) creationParams.get("videoPath");
     }
 
     @NonNull
@@ -50,6 +49,9 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         switch (call.method) {
             case "play":
+                if(videoView.getPlayerState() == PlayerState.IDLE){
+                    videoView.setVideoPath(videoPath);
+                }
                 videoView.start();
                 break;
             case "pause":

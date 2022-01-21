@@ -1,6 +1,7 @@
 package com.example.flutter_qiniu_pili;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
 
     FlutterQiniuPlayer(@NonNull Context context, BinaryMessenger messenger, int id, @NonNull Map creationParams) {
         videoView = new PLVideoView(context);
+        videoView.setBackgroundColor(Color.TRANSPARENT);
         methodChannel = new MethodChannel(messenger, "plugins.edram.qiniu_pili/player_" + id);
         methodChannel.setMethodCallHandler(this);
 
@@ -32,6 +34,8 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
         AVOptions options = new AVOptions();
         options.setInteger(AVOptions.KEY_LOG_LEVEL, 5);
         videoView.setAVOptions(options);
+        videoView.setLooping(true);
+//        videoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_PAVED_PARENT);
 
         videoPath = (String) creationParams.get("videoPath");
     }
@@ -43,7 +47,11 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+        Log.i("qiniu-player","wahahahahahahahahhahahahahahahahahahaahhahah");
+        methodChannel.setMethodCallHandler(null);
+        videoView.stopPlayback();
+    }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -56,6 +64,10 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
                 break;
             case "pause":
                 videoView.pause();
+                break;
+            case "seekTo":
+                Long time= new Long(String.valueOf(call.arguments));//first way.
+                videoView.seekTo(time);
                 break;
             default:
                 result.notImplemented();

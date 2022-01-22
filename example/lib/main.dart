@@ -1,10 +1,5 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_qiniu_pili/flutter_qiniu_pili.dart';
-import 'package:flutter_qiniu_pili/views/text_view.dart';
 import 'package:flutter_qiniu_pili_example/components/douyin_player.dart';
-import 'package:preload_page_view/preload_page_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -151,8 +146,9 @@ class _MyAppState extends State<MyApp> {
           itemCount: urls.length,
           onPageChanged: (int position) {
             var controller = controllers[position];
+            var url = urls[position];
 
-            controller.play();
+            controller.setVideoPath(url);
           },
         ),
       ),

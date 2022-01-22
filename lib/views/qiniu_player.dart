@@ -19,10 +19,13 @@ class QiniuPlayer extends StatefulWidget {
     Key? key,
     this.useHybridComposition = false,
     this.onQiniuPlayerCreated,
+    this.onPrepared,
   }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _QiniuPlayerState();
+
+  final void Function(QiniuPlayerController controller, int time)? onPrepared;
 }
 
 class _QiniuPlayerState extends State<QiniuPlayer> {
@@ -79,15 +82,35 @@ class _QiniuPlayerState extends State<QiniuPlayer> {
     if (widget.onQiniuPlayerCreated == null) {
       return;
     }
-    widget.onQiniuPlayerCreated!(QiniuPlayerController(id));
+    widget.onQiniuPlayerCreated!(QiniuPlayerController(id, widget));
   }
 }
 
 class QiniuPlayerController {
-  QiniuPlayerController(int id)
-      : channel = MethodChannel('plugins.edram.qiniu_pili/player_$id');
+  final QiniuPlayer player;
+  late MethodChannel channel;
 
-  final MethodChannel channel;
+  QiniuPlayerController(int id, this.player) {
+    channel = MethodChannel('plugins.edram.qiniu_pili/player_$id');
+
+    channel.setMethodCallHandler(handleMethod);
+  }
+
+  Future<dynamic> handleMethod(MethodCall call) async {
+    var method = call.method;
+    var arguments = call.arguments;
+    switch (method) {
+      case 'onPrepared':
+        player.onPrepared?.call(this, arguments);
+        break;
+      default:
+        throw UnimplementedError("Unimplemented ${call.method} method");
+    }
+  }
+
+  Future<void> setVideoPath(String videoPath) async {
+    return channel.invokeMethod('setVideoPath', videoPath);
+  }
 
   Future<void> play() async {
     return channel.invokeMethod('play');

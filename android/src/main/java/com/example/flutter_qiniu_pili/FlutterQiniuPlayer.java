@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.pili.pldroid.player.AVOptions;
+import com.pili.pldroid.player.PLOnPreparedListener;
 import com.pili.pldroid.player.PlayerState;
 import com.pili.pldroid.player.widget.PLVideoView;
 
@@ -37,6 +38,9 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
         videoView.setLooping(true);
 //        videoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_PAVED_PARENT);
 
+        // 事件
+        videoView.setOnPreparedListener(mOnPreparedListener);
+
         videoPath = (String) creationParams.get("videoPath");
     }
 
@@ -56,6 +60,11 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         switch (call.method) {
+            case "setVideoPath":
+                String path = call.arguments.toString();
+                Log.i("qiniu-player",path);
+                videoView.setVideoPath(videoPath);
+                break;
             case "play":
                 if(videoView.getPlayerState() == PlayerState.IDLE){
                     videoView.setVideoPath(videoPath);
@@ -73,4 +82,12 @@ public class FlutterQiniuPlayer implements PlatformView, MethodChannel.MethodCal
                 result.notImplemented();
         }
     }
+
+    private PLOnPreparedListener mOnPreparedListener = new PLOnPreparedListener() {
+        @Override
+        public void onPrepared(int preparedTime) {
+            methodChannel.invokeMethod("onPrepared", preparedTime);
+        }
+    };
+
 }

@@ -6,6 +6,10 @@ import 'package:flutter_qiniu_pili/flutter_qiniu_pili.dart';
 class DouyinPlayerController {
   QiniuPlayerController? qiniuController;
 
+  void setVideoPath(String videoPath) {
+    qiniuController?.setVideoPath(videoPath);
+  }
+
   void play() {
     qiniuController?.play();
   }
@@ -44,6 +48,9 @@ class _DouyinPlayerState extends State<DouyinPlayer> {
         widget.url,
         onQiniuPlayerCreated: (controller) {
           widget.controller.qiniuController = controller;
+        },
+        onPrepared: (controller, time) {
+          controller.play();
         },
       ),
     );

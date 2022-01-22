@@ -9,6 +9,7 @@ var urls = [
   "https://shortvideo.jingmaiwang.com/Fs0_aniHj4S56yXpXbY_FUbJIYCl",
   "https://shortvideo.jingmaiwang.com/FqysKx_FFSnSTBGRPo6tRtpr5Vr0",
   "https://shortvideo.jingmaiwang.com/Fvh-okusDy5SHCScECfXxYkVBWWd",
+  "https://img.jingmaiwang.com/edram/tt1.mp4",
   "https://shortvideo.jingmaiwang.com/Fil0O_krWvxRtdbMZ11U7kIG8Ufb",
   "https://shortvideo.jingmaiwang.com/FsfjHPU3S489-ot9DanyT9YOX-Pn",
   "https://shortvideo.jingmaiwang.com/FlVJcv3oOZxqnhrd0eHmSMGpk9-p",
@@ -123,7 +124,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var controllers = urls.map((url) => DouyinPlayerController()).toList();
+    var controllers = urls.map((url) => DouyinPlayerController(url)).toList();
 
     return MaterialApp(
       home: Scaffold(
@@ -136,7 +137,6 @@ class _MyAppState extends State<MyApp> {
               children: [
                 Expanded(
                   child: DouyinPlayer(
-                    urls[index],
                     controller: controller,
                   ),
                 ),
@@ -146,9 +146,8 @@ class _MyAppState extends State<MyApp> {
           itemCount: urls.length,
           onPageChanged: (int position) {
             var controller = controllers[position];
-            var url = urls[position];
 
-            controller.setVideoPath(url);
+            controller.play();
           },
         ),
       ),

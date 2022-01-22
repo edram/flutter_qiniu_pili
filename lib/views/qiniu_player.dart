@@ -12,9 +12,12 @@ class QiniuPlayer extends StatefulWidget {
 
   final QiniuPlayerCreatedCallback? onQiniuPlayerCreated;
 
+  final bool useHybridComposition;
+
   const QiniuPlayer(
     this.videoPath, {
     Key? key,
+    this.useHybridComposition = false,
     this.onQiniuPlayerCreated,
   }) : super(key: key);
 
@@ -31,40 +34,42 @@ class _QiniuPlayerState extends State<QiniuPlayer> {
     };
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return PlatformViewLink(
+      if (widget.useHybridComposition) {
+        return PlatformViewLink(
+          viewType: viewType,
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
+              gestureRecognizers: const <
+                  Factory<OneSequenceGestureRecognizer>>{},
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+            );
+          },
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            return PlatformViewsService.initSurfaceAndroidView(
+              id: params.id,
+              viewType: viewType,
+              layoutDirection: TextDirection.rtl,
+              creationParams: creationParams,
+              creationParamsCodec: const StandardMessageCodec(),
+              onFocus: () {
+                params.onFocusChanged(true);
+              },
+            )
+              ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+              ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
+              ..create();
+          },
+        );
+      }
+
+      return AndroidView(
         viewType: viewType,
-        surfaceFactory:
-            (BuildContext context, PlatformViewController controller) {
-          return AndroidViewSurface(
-            controller: controller as AndroidViewController,
-            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          );
-        },
-        onCreatePlatformView: (PlatformViewCreationParams params) {
-          return PlatformViewsService.initSurfaceAndroidView(
-            id: params.id,
-            viewType: viewType,
-            layoutDirection: TextDirection.rtl,
-            creationParams: creationParams,
-            creationParamsCodec: const StandardMessageCodec(),
-            onFocus: () {
-              params.onFocusChanged(true);
-            },
-          )
-            ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
-            ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
-            ..create();
-        },
+        creationParams: creationParams,
+        creationParamsCodec: const StandardMessageCodec(),
+        onPlatformViewCreated: _onPlatformViewCreated,
       );
-      // return AndroidView(
-      //   viewType: 'flutter_qiniu_pili/player',
-      //   creationParams: {
-      //     'videoPath': widget.videoPath,
-      //   },
-      //   creationParamsCodec: const StandardMessageCodec(),
-      //   onPlatformViewCreated: _onPlatformViewCreated,
-      // );
     }
     return Text(
         '$defaultTargetPlatform is not yet supported by the text_view plugin');
